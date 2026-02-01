@@ -1,89 +1,266 @@
 :root {
-    --bg: #0f0f0f;
-    --card-bg: #1a1a1a;
-    --accent: #e50914; /* Netflix Red */
-    --text: #ffffff;
+    --primary: #6366f1;
+    --secondary: #a855f7;
+    --accent: #f43f5e;
+    --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+    --glass: rgba(255, 255, 255, 0.7);
 }
 
 body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-gradient);
+    font-family: 'Outfit', sans-serif;
     margin: 0;
+    padding: 40px;
+    box-sizing: border-box;
+    min-height: 100vh;
+}
+
+/* --- THE CRAMP FIX --- */
+.dashboard {
     display: flex;
-    justify-content: center;
+    gap: 40px;
+    max-width: 1800px; /* Increased for better 4-column breathing room */
+    margin: 0 auto;
+    align-items: flex-start; /* Keeps sidebar from stretching to the floor */
 }
 
-.container {
-    width: 90%;
-    max-width: 1200px;
-    padding: 2rem 0;
+/* Sidebar: Fixed width, no shrinking allowed */
+.sidebar { 
+    width: 320px; 
+    flex-shrink: 0; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 25px; 
 }
 
-header { text-align: center; margin-bottom: 3rem; }
-header h1 span { color: var(--accent); }
+/* Main Area: Fills all remaining space but stays contained */
+.main-content {
+    flex-grow: 1;
+    min-width: 0; 
+}
 
-.search-area {
+/* --- WIDGETS --- */
+.widget {
+    background: white;
+    padding: 25px;
+    border-radius: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.8);
+}
+
+/* --- SEARCH & FILTERS --- */
+.search-widget {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    margin-bottom: 40px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Header & Logo --- */
+.logo {
+    font-size: 2.8rem;
+    font-weight: 900;
+    margin: 0;
+    color: #1e293b;
+}
+
+.logo span {
+    background: linear-gradient(to right, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo {
+    font-size: 2.8rem;
+    font-weight: 900;
+    margin: 0;
+    color: #1e293b;
+}
+
+.logo span {
+    background: linear-gradient(to right, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin: 10px 0 30px;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin: 10px 0 30px;
+}
+
+/* --- Search Bar & Action Button --- */
+.search-bar {
     display: flex;
-    gap: 10px;
-    justify-content: center;
-    position: relative;
-    margin-bottom: 3rem;
+    gap: 15px;
+    margin-bottom: 35px;
+    width: 100%;
 }
 
-input {
-    padding: 15px 25px;
-    width: 400px;
-    border-radius: 30px;
+.search-bar input {
+    flex: 1;
+    padding: 16px 24px;
+    border-radius: 18px;
+    border: 1.5px solid #e2e8f0;
+    font-size: 1.1rem;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.glow-btn {
+    padding: 0 35px;
+    border-radius: 18px;
     border: none;
-    background: var(--card-bg);
+    background: linear-gradient(90deg, #6366f1, #a855f7);
     color: white;
-    font-size: 1rem;
-}
-
-button {
-    padding: 15px 30px;
-    border-radius: 30px;
-    border: none;
-    background: var(--accent);
-    color: white;
-    font-weight: bold;
+    font-weight: 800;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
 }
 
-button:hover { transform: scale(1.05); background: #ff0f1b; }
-
-.suggestions-dropdown {
-    position: absolute;
-    top: 60px;
-    width: 400px;
-    background: var(--card-bg);
-    border-radius: 10px;
-    z-index: 10;
+.glow-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px rgba(99, 102, 241, 0.3);
 }
 
-.suggestion-item {
-    padding: 10px 20px;
-    cursor: pointer;
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
 }
 
-.suggestion-item:hover { background: #333; }
+/* --- Filter Section Container --- */
+.advanced-filters {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    margin-bottom: 40px;
+}
 
+.filter-title {
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #475569;
+    margin-bottom: 20px;
+}
+
+/* --- The 3-Column Spacing Fix --- */
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Forces even 3 columns */
+    gap: 25px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    color: #1e293b;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background: white;
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box; /* Crucial for padding/width math */
+}
+
+/* --- THE MOVIE CARDS (4 IN A ROW) --- */
+/* --- Results Grid --- */
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr); /* 4 cards per row */
     gap: 20px;
+    width: 100%;
 }
 
 .movie-card {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 15px;
-    border-bottom: 4px solid var(--accent);
-    transition: 0.3s;
+    background: white;
+    padding: 25px 15px;
+    border-radius: 24px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.03);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.movie-card:hover { transform: translateY(-10px); }
-.movie-card h3 { margin: 0 0 10px 0; font-size: 1.1rem; }
-.movie-card p { font-size: 0.9rem; color: #aaa; margin: 5px 0; }
+.movie-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.1);
+}
+
+.movie-card h3 {
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 12px 0;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+/* --- Rating Badge --- */
+.rating-badge {
+    display: inline-block;
+    background: #fef2f2;
+    color: #f43f5e;
+    padding: 4px 12px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    box-shadow: 0 4px 10px rgba(244, 63, 94, 0.1);
+}
+
+
+.rating-pill {
+    background: #fef2f2;
+    color: var(--accent);
+    padding: 6px 15px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+/* Fact Button & Link Styling */
+.vibey-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(45deg, #ff00cc, #3333ff);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.colab-link {
+    display: block;
+    margin-top: 10px;
+    color: #f59e0b;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+}

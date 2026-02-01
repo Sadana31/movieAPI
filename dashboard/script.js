@@ -1,91 +1,91 @@
 const BASE_URL = "https://movieapi-8sg7.onrender.com";
-const movieInput = document.getElementById('movieInput');
-const suggestionsBox = document.getElementById('suggestions');
-const movieGrid = document.getElementById('movieGrid');
-const getRecsBtn = document.getElementById('getRecsBtn');
 
-// Helper to show status to the user
-function setStatus(msg) {
-    movieGrid.innerHTML = `<p style="text-align:center; color:#e50914; font-weight:bold;">${msg}</p>`;
-}
-
-// 1. Live Search (Fuzzy)
-movieInput.addEventListener('input', async (e) => {
-    const query = e.target.value.trim();
-    if (query.length < 2) {
-        suggestionsBox.innerHTML = '';
-        return;
-    }
+async function getRecommendations() {
+    const title = document.getElementById('movieInput').value.trim();
+    const director = document.getElementById('directorInput').value.trim();
+    const genre = document.getElementById('genreInput').value.trim();
+    const rating = document.getElementById('ratingInput').value || 6.5;
+    const limit = document.getElementById('limitInput')?.value || 12;
+    
+    const grid = document.getElementById('movieGrid');
+    grid.innerHTML = "<h2 style='grid-column: 1/-1; text-align: center;'>✨ Mixing the Magic...</h2>";
 
     try {
-        const res = await fetch(`${BASE_URL}/search?query=${encodeURIComponent(query)}&limit=5`);
-        if (!res.ok) throw new Error("Server waking up...");
-        const data = await res.json();
+        let response;
         
-        suggestionsBox.innerHTML = data.results.map(movie => `
-            <div class="suggestion-item" onclick="selectMovie('${movie.title.replace(/'/g, "\\'")}')">
-                ${movie.title}
-            </div>
-        `).join('');
-    } catch (err) { 
-        console.log("Search silent error (server likely sleeping)");
-    }
-});
+        // --- LOGIC: IF TITLE IS EMPTY, USE /FILTER ---
+        if (!title) {
+            // Sends the exact POST body your API expects
+            const filterBody = {
+                runtime: 0,
+                director: director || "", 
+                cast: "",                 
+                language: "",             
+                genre: genre || "",       
+                limit: parseInt(limit)
+            };
 
-function selectMovie(title) {
-    movieInput.value = title;
-    suggestionsBox.innerHTML = '';
-}
-
-// 2. Fetch Recommendations
-getRecsBtn.addEventListener('click', async () => {
-    const title = movieInput.value.trim();
-    if (!title) return alert("Type a movie name first!");
-
-    setStatus("🚀 Waking up the server (this can take 30-50s on Render Free)...");
-
-    try {
-        const response = await fetch(`${BASE_URL}/recommend`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                title: title,
-                top_k: 10
-            })
-        });
-
-        if (!response.ok) throw new Error("API Error");
+            response = await fetch(`${BASE_URL}/filter`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(filterBody)
+            });
+        } 
+        // --- LOGIC: IF TITLE EXISTS, USE /RECOMMEND ---
+        else {
+            response = await fetch(`${BASE_URL}/recommend`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: title,
+                    top_k: parseInt(limit),
+                    min_rating: parseFloat(rating)
+                })
+            });
+        }
 
         const data = await response.json();
-        displayMovies(data.recommendations);
+        
+        // Handle different key names from different endpoints (recommendations vs results)
+        const movies = data.recommendations || data.results || [];
+        
+        if (movies.length === 0) {
+            grid.innerHTML = "<h2 style='grid-column: 1/-1; text-align: center;'>🕵️ No movies found! Try different filters.</h2>";
+            return;
+        }
+
+        displayMiniCards(movies);
+
     } catch (err) {
-        setStatus("❌ Failed to connect. Please wait 1 minute for the server to wake up and try again.");
-        console.error(err);
+        grid.innerHTML = "<h2 style='grid-column: 1/-1; text-align: center;'>😴 API is warming up or an error occurred.</h2>";
+    }
+}
+
+function displayMiniCards(movies) {
+    const grid = document.getElementById('movieGrid');
+    grid.innerHTML = movies.map(m => `
+        <div class="movie-card">
+            <span class="rating-pill">⭐ ${m.rating || m.vote_average || 'N/A'}</span>
+            <h3>${m.title || m.original_title}</h3>
+            <span style="font-size: 2rem;">🎬</span>
+        </div>
+    `).join('');
+}
+
+// --- EVENT LISTENERS ---
+
+// Click Search Button
+document.getElementById('getRecsBtn').addEventListener('click', getRecommendations);
+
+// Enter Key Listener for ALL Inputs
+const allInputs = ['movieInput', 'directorInput', 'genreInput', 'ratingInput', 'limitInput'];
+allInputs.forEach(id => {
+    const inputElement = document.getElementById(id);
+    if (inputElement) {
+        inputElement.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                getRecommendations();
+            }
+        });
     }
 });
-
-
-function displayMovies(movies) {
-    console.log("Data received from API:", movies); // CHECK YOUR CONSOLE (F12)
-
-    const grid = document.getElementById('movieGrid');
-    
-    if (!movies || movies.length === 0) {
-        grid.innerHTML = "<p>No movies found in the database.</p>";
-        return;
-    }
-
-    // Clear the "Loading" text
-    grid.innerHTML = "";
-
-    movies.forEach(movie => {
-        const card = document.createElement('div');
-        card.className = 'movie-card';
-        card.innerHTML = `
-            <h3>${movie.title}</h3>
-            <p>⭐ Rating: ${movie.rating || 'N/A'}</p>
-            <p>🎯 Match: ${movie.similarity ? Math.round(movie.similarity * 100) : '??'}%</p>
-        `;
-        grid.appendChild(card);
-    });
-}
