@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieRec | AI Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Movie<span>Rec</span> 🔥</h1>
+            <p>AI-Powered Recommendations</p>
+        </header>
+
+        <section class="search-area">
+            <div class="search-box">
+                <input type="text" id="movieInput" placeholder="Enter a movie you love..." autocomplete="off">
+                <div id="suggestions" class="suggestions-dropdown"></div>
+            </div>
+            <button id="getRecsBtn">Get Recommendations</button>
+        </section>
+
+        <section class="results-area">
+            <h2 id="resultTitle"></h2>
+            <div id="movieGrid" class="movie-grid">
+                </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

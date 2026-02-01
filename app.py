@@ -1,9 +1,19 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware  # Fixes "CORSMiddleware not defined"
 from pydantic import BaseModel
 import pickle
+import pandas as pd  # Fixes "NameError: name 'pd' or 'movies_df' logic"
 from rapidfuzz import process, fuzz
 
 app = FastAPI(title="Movie Recommender API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 movies_df = pickle.load(open("movies_df.pkl", "rb"))
 cosine_sim = pickle.load(open("cosine_sim.pkl", "rb"))
@@ -129,17 +139,17 @@ def filter_movies(req: FilterRequest):
     # cast filter (cast column is list of cleaned names)
     if req.cast:
         c = req.cast.lower().replace(" ", "")
-        df = df[df["cast"].apply(lambda x: c in x if isinstance(x, list) else False)]
+        df = df[df["cast"].apply(lambda x: any(c in str(name).lower().replace(" ", "") for name in x) if isinstance(x, list) else False)]
+
+    # Change this for Genre:
+    if req.genre:
+        g = req.genre.lower().replace(" ", "")
+        df = df[df["genres"].apply(lambda x: any(g in str(genre).lower().replace(" ", "") for genre in x) if isinstance(x, list) else False)]
 
     # original_language filter
     if req.language:
         lang = req.language.lower().strip()
         df = df[df["original_language"].astype(str).str.lower() == lang]
-
-    # genre filter (genres column is list of cleaned names)
-    if req.genre:
-        g = req.genre.lower().replace(" ", "")
-        df = df[df["genres"].apply(lambda x: g in x if isinstance(x, list) else False)]
 
     results = df[["original_title", "vote_average", "vote_count", "runtime"]].head(req.limit).to_dict(orient="records")
 

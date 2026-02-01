@@ -1,0 +1,89 @@
+:root {
+    --bg: #0f0f0f;
+    --card-bg: #1a1a1a;
+    --accent: #e50914; /* Netflix Red */
+    --text: #ffffff;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    padding: 2rem 0;
+}
+
+header { text-align: center; margin-bottom: 3rem; }
+header h1 span { color: var(--accent); }
+
+.search-area {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 3rem;
+}
+
+input {
+    padding: 15px 25px;
+    width: 400px;
+    border-radius: 30px;
+    border: none;
+    background: var(--card-bg);
+    color: white;
+    font-size: 1rem;
+}
+
+button {
+    padding: 15px 30px;
+    border-radius: 30px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover { transform: scale(1.05); background: #ff0f1b; }
+
+.suggestions-dropdown {
+    position: absolute;
+    top: 60px;
+    width: 400px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    z-index: 10;
+}
+
+.suggestion-item {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover { background: #333; }
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.movie-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    border-bottom: 4px solid var(--accent);
+    transition: 0.3s;
+}
+
+.movie-card:hover { transform: translateY(-10px); }
+.movie-card h3 { margin: 0 0 10px 0; font-size: 1.1rem; }
+.movie-card p { font-size: 0.9rem; color: #aaa; margin: 5px 0; }
